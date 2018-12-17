@@ -73,7 +73,7 @@ public class RootCmd {
     }
 
     //移动文件
-    public void moveFileToSystem(String filePath, String cpFilePath,String name) {
+    public void moveFileToSD(String filePath, String cpFilePath,String name) {
         exusecmd("mount -o rw,remount "+cpFilePath);
         exusecmd("chmod 777 "+cpFilePath);
         exusecmd("cp -r "+filePath+" "+cpFilePath);
@@ -186,7 +186,7 @@ public class RootCmd {
                         AppModel model=(AppModel) v.getTag();
                         if (isNew){
                             String dataFilePath="/data/data/"+model.getPackageName()+"/shared_prefs";
-                            moveFileToSystem(dataFilePath,getSDPath()+"/xmlTransit",model.getAppName()+"ID"+model.getId());
+                            moveFileToSD(dataFilePath,getSDPath()+"/xmlTransit",model.getAppName()+"ID"+model.getId());
                         }
 
                         imageView.setVisibility(View.VISIBLE);
