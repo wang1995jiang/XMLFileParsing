@@ -33,8 +33,7 @@ import java.util.List;
 
 
 public class RootCmd {
-
-    public static AppModel modelChange;
+    private String findPackage="";
     private List<AppModel> appModels=new ArrayList<>();
     Context context;
 
@@ -148,8 +147,11 @@ public class RootCmd {
                 public void onClick(DialogInterface dialog, int which) {
                     List<AppModel> appModels=new ArrayList<>();
                     for (String str:strList){
-                        String []s=str.split("ID");
-                        appModels.add(getAppInfo().get(Integer.valueOf(s[1])));
+                        for (AppModel appModel:getAppInfo()){
+                            if (appModel.getPackageName().equals(str)){
+                                appModels.add(appModel);
+                            }
+                        }
                     }
                     appShowDialog(false,imageView,textView,appModels);
                 }
@@ -186,12 +188,13 @@ public class RootCmd {
                         AppModel model=(AppModel) v.getTag();
                         if (isNew){
                             String dataFilePath="/data/data/"+model.getPackageName()+"/shared_prefs";
-                            moveFileToSD(dataFilePath,getSDPath()+"/xmlTransit",model.getAppName()+"ID"+model.getId());
+                            moveFileToSD(dataFilePath,getSDPath()+"/xmlTransit",model.getPackageName());
                         }
 
                         imageView.setVisibility(View.VISIBLE);
                         imageView.setImageDrawable(model.getIcon());
                         textView.setText(model.getAppName());
+                        findPackage=model.getPackageName();
                         dialog.dismiss();
                     }
             });
@@ -231,17 +234,9 @@ public class RootCmd {
 
         boolean isHaveFileName=false;
 
-        List<String> names=getFolderName();
-        if (names.size()>0){
-            String name="";
-            for (String str:names){
-                if (str.contains(textView.getText())){
-                    name=str;
-                    break;
-                }
-            }
+        if (findPackage.length()>0){
 
-            File file = new File(getSDPath()+"/xmlTarget/"+name);
+            File file = new File(getSDPath()+"/xmlTarget/"+findPackage);
             File[] subFile = file.listFiles();
             for (int iFileLength = 0; iFileLength < subFile.length; iFileLength++) {
                 // 判断是否为文件夹
@@ -271,7 +266,7 @@ public class RootCmd {
             }
             showToast("查找完成！");
         }else {
-            showToast("无可供查找的XML文件！");
+            showToast("你还没有选择一个应用");
         }
 
         return resultFind;
